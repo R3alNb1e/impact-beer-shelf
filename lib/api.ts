@@ -36,18 +36,13 @@ export async function fetchBeers(params?: FetchBeersParams): Promise<Beer[]> {
 
 
     const url = `${API_BASE_URL}/beers?${queryParams.toString()}`;
-    console.log('[API FETCH V3] Fetching beers from URL:', url);
-
     try {
         const response = await fetch(url, { cache: 'no-store' });
-        console.log('[API FETCH V3] Response Status:', response.status);
-
         if (!response.ok) {
             console.error('[API FETCH V3] Response not OK:', response.status, response.statusText, await response.text());
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data: Beer[] = await response.json();
-        console.log('[API FETCH V3] Data received from API:', data.length, 'items');
         return data;
     } catch (error) {
         console.error("[API FETCH V3] Failed to fetch beers:", error);
@@ -55,23 +50,26 @@ export async function fetchBeers(params?: FetchBeersParams): Promise<Beer[]> {
     }
 }
 
-// fetch a random beer still need to test
 export async function fetchRandomBeer(): Promise<Beer | null> {
     const url = `${API_BASE_URL}/beers/random`;
-    console.log('[API FETCH V3] Fetching random beer from URL:', url);
     try {
         const response = await fetch(url, { cache: 'no-store' });
-        console.log('[API FETCH V3] Response Status (random):', response.status);
-        if(!response.ok) {
-            console.error('[API FETCH V3] Response not OK (random):', response.status, response.statusText, await response.text());
+        if (!response.ok) {
+            const errorBody = await response.text();
+            console.error('[API FETCH V3] Response not OK (random):', response.status, response.statusText, errorBody);
+            if (response.status === 404) {
+                throw new Error(`Random beer endpoint not found (404).`);
+            }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: Beer[] = await response.json();
-        if (data && data.length > 0) {
-            console.log('[API FETCH V3] Random beer found:', data[0].name);
-            return data[0];
+
+        const beerData: Beer = await response.json();
+
+        if (beerData && beerData.id && beerData.name) {
+            return beerData;
+        } else {
+            return null;
         }
-        return null;
     } catch (error) {
         console.error(`[API FETCH V3] Failed to fetch random beer:`, error);
         return null;

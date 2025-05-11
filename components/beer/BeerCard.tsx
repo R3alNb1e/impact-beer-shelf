@@ -1,66 +1,206 @@
+// src/components/beer/BeerCard.tsx
 "use client";
 
 import React from 'react';
 import Image from 'next/image';
 import { Beer } from '@/types';
+import { CalendarDays, Zap, Droplet, Percent } from 'lucide-react';
 
-interface BeerCardProps {
+export interface BeerCardProps {
     beer: Beer;
+    isLarge?: boolean;
+    variant?: 'default' | 'wide' | 'tall' | 'extraLarge';
 }
 
-const BeerCard: React.FC<BeerCardProps> = ({ beer }) => {
+const BeerCard: React.FC<BeerCardProps> = ({ beer, isLarge = false, variant = 'default' }) => {
     let imageUrlToDisplay: string | null = null;
 
-    // Still need to put the size in and make sure that the gallery only loads when all the cards have the img correctly
-    if (beer.image) {
+    if (beer.image_url) {
+        imageUrlToDisplay = beer.image_url;
+    } else if (beer.image) {
         imageUrlToDisplay = `https://punkapi.online/v3/images/${beer.image}`;
     }
 
-    console.log(`[BeerCard] Beer: "${beer.name}", API image field: "${beer.image}", Constructed URL: "${imageUrlToDisplay}"`);
+    // ----- 1. Extra Large (2x2) & Tall (1x2) - Image Dominant with Overlay -----
+    if (isLarge && (variant === 'extraLarge' || variant === 'tall')) {
+        return (
+            <div className="relative bg-beer-cafe-noir rounded-xl shadow-2xl overflow-hidden h-full group transition-all duration-300 hover:shadow-beer-jonquil/30 hover:ring-2 hover:ring-beer-jonquil">
+                {imageUrlToDisplay ? (
+                    <Image
+                        src={imageUrlToDisplay}
+                        alt={beer.name || 'Beer image'}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Consider adjusting based on actual grid cell size
+                        unoptimized={process.env.NODE_ENV === 'development'}
+                        priority={isLarge} // Good for LCP
+                        onError={(e) => {
+                            console.error(`Failed to load image for ${beer.name}: ${imageUrlToDisplay}`, (e.target as HTMLImageElement).src);
+                        }}
+                    />
+                ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-beer-timberwolf/70 p-4 text-center bg-beer-cafe-noir/90">
+                        <Droplet size={60} className="opacity-50 mb-3" />
+                        <span className="text-lg">No Image Available</span>
+                    </div>
+                )}
+                {/* MODIFIED Text Overlay for better contrast */}
+                <div className="absolute inset-0 flex flex-col justify-end
+                                bg-gradient-to-t from-black/70 via-black/40 to-transparent
+                                p-4 sm:p-5 md:p-6 group-hover:from-black/80 transition-all duration-300">
+                    <h3
+                        className="text-xl sm:text-2xl lg:text-3xl font-bold text-white group-hover:text-beer-jonquil transition-colors duration-300 drop-shadow-lg truncate"
+                        title={beer.name}
+                    >
+                        {beer.name}
+                    </h3>
+                    <p className="text-sm sm:text-base text-white mt-1 drop-shadow-md truncate" title={beer.tagline}>
+                        {/* Kept beer-timberwolf for tagline, but with higher opacity for better readability on gradient */}
+                        {beer.tagline}
+                    </p>
+                    <div className="mt-2 flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm">
+                        {beer.abv && (
+                            <div className="flex items-center text-white"> {/* Brighter text for details */}
+                                <Percent size={14} className="mr-1 text-beer-jonquil" />
+                                <span className="font-medium">{beer.abv}% ABV</span>
+                            </div>
+                        )}
+                        {beer.ibu && (
+                            <div className="flex items-center text-white"> {/* Brighter text for details */}
+                                <Zap size={14} className="mr-1 text-beer-jonquil" />
+                                <span className="font-medium">{beer.ibu} IBU</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-    return (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col">
-            <div className="block group">
-                <div className="relative w-full h-64 sm:h-72 bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+    // ----- 2. Wide Card (e.g., 2x1) - Image Left, Text Right -----
+    if (isLarge && variant === 'wide') {
+        // ... (This section remains unchanged from your provided code)
+        return (
+            <div className="bg-beer-beaver dark:bg-beer-chamoisee/80 rounded-xl shadow-xl dark:shadow-beer-cafe-noir/40 overflow-hidden h-full group flex flex-col sm:flex-row transition-all duration-300 hover:shadow-beer-jonquil/20 hover:ring-2 hover:ring-beer-jonquil/70">
+                {/* Image Section */}
+                <div className="relative w-full sm:w-2/5 md:w-1/3 h-48 sm:h-full bg-beer-chamoisee/50 dark:bg-beer-beaver/50 flex items-center justify-center overflow-hidden">
                     {imageUrlToDisplay ? (
                         <Image
                             src={imageUrlToDisplay}
                             alt={beer.name || 'Beer image'}
-                            layout="fill"
-                            objectFit="contain"
-                            className="p-4 group-hover:scale-105 transition-transform duration-300"
-                            unoptimized={false}
+                            fill
+                            className="object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 40vw, 33vw"
+                            unoptimized={process.env.NODE_ENV === 'development'}
                             onError={(e) => {
                                 console.error(`Failed to load image for ${beer.name}: ${imageUrlToDisplay}`, (e.target as HTMLImageElement).src);
                             }}
                         />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 p-4 text-center">
-                            <span>No Image Available</span>
+                        <div className="w-full h-full flex flex-col items-center justify-center text-beer-timberwolf/70 dark:text-beer-cafe-noir/70 p-4 text-center">
+                            <Droplet size={48} className="opacity-50 mb-2" />
+                            <span>No Image</span>
                         </div>
                     )}
                 </div>
-                <div className="p-5 flex-grow flex flex-col">
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white group-hover:text-yellow-500 dark:group-hover:text-yellow-400 mb-1 truncate" title={beer.name}>
-                        {beer.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 h-10 overflow-hidden text-ellipsis" title={beer.tagline}>
-                        {beer.tagline}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mb-3">
-                        First Brewed: {beer.first_brewed}
-                    </p>
-                    <div className="mt-auto pt-2 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex justify-between items-center text-sm">
-                            <span className="font-medium text-gray-700 dark:text-gray-300">
-                                ABV: {beer.abv !== null && beer.abv !== undefined ? `${beer.abv}%` : 'N/A'}
-                            </span>
-                            {beer.ibu !== null && beer.ibu !== undefined && (
-                                <span className="text-gray-500 dark:text-gray-400">IBU: {beer.ibu}</span>
-                            )}
+
+                {/* Content Section */}
+                <div className="w-full sm:w-3/5 md:w-2/3 p-5 flex flex-col justify-between text-beer-timberwolf dark:text-beer-cafe-noir">
+                    <div>
+                        <h3 className="text-xl sm:text-2xl font-bold text-beer-jonquil transition-colors duration-300 truncate" title={beer.name}>
+                            {beer.name}
+                        </h3>
+                        <p className="text-sm text-beer-timberwolf/80 dark:text-beer-cafe-noir/80 mt-1 mb-3" title={beer.tagline}>
+                            {beer.tagline}
+                        </p>
+                        <div className="text-xs text-beer-timberwolf/70 dark:text-beer-cafe-noir/70 mb-3 flex items-center">
+                            <CalendarDays size={14} className="mr-2 opacity-80 text-beer-jonquil" />
+                            <span>First Brewed: {beer.first_brewed}</span>
                         </div>
+                        {beer.description && (
+                            <p className="text-xs text-beer-timberwolf/90 dark:text-beer-cafe-noir/90 mb-3 max-h-24 overflow-y-auto leading-relaxed scrollbar-thin scrollbar-thumb-beer-jonquil/50 scrollbar-track-transparent">
+                                {beer.description.length > 150 ? `${beer.description.substring(0, 147)}...` : beer.description}
+                            </p>
+                        )}
+                    </div>
+                    <div className="mt-auto pt-3 border-t border-beer-chamoisee/70 dark:border-beer-beaver/70 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:justify-between sm:items-center text-sm">
+                        <div className="flex items-center">
+                            <Percent size={16} className="mr-1.5 text-beer-jonquil opacity-90" />
+                            <span className="font-semibold text-beer-timberwolf dark:text-beer-cafe-noir mr-1">ABV:</span>
+                            <span className="text-beer-jonquil font-medium">
+                                {beer.abv !== null && beer.abv !== undefined ? `${beer.abv}%` : 'N/A'}
+                            </span>
+                        </div>
+                        {beer.ibu !== null && beer.ibu !== undefined && (
+                            <div className="flex items-center">
+                                <Zap size={16} className="mr-1.5 text-beer-jonquil opacity-90" />
+                                <span className="font-semibold text-beer-timberwolf dark:text-beer-cafe-noir mr-1">IBU:</span>
+                                <span className="text-beer-jonquil font-medium">{beer.ibu}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
+            </div>
+        );
+    }
+
+    // ----- 3. Default Card (1x1) - Text Left, Image Right -----
+    // ... (This section remains unchanged from your provided code)
+    return (
+        <div className="bg-beer-beaver dark:bg-beer-chamoisee/80 rounded-xl shadow-xl dark:shadow-beer-cafe-noir/40 overflow-hidden h-full group flex flex-row transition-all duration-300 hover:shadow-beer-jonquil/20 hover:ring-2 hover:ring-beer-jonquil/70">
+            {/* Content Area (Left Side) */}
+            <div className="w-3/5 sm:w-1/2 p-3 sm:p-4 flex flex-col text-beer-timberwolf dark:text-beer-cafe-noir">
+                <div className="mb-2">
+                    <h3 className="text-sm sm:text-base font-bold text-beer-jonquil transition-colors duration-300 group-hover:text-beer-jonquil/80 leading-tight" title={beer.name}>
+                        {beer.name}
+                    </h3>
+                    <p className="text-xs text-beer-timberwolf/80 dark:text-beer-cafe-noir/80 mt-1 h-8 sm:h-9 overflow-hidden text-ellipsis" title={beer.tagline}>
+                        {beer.tagline}
+                    </p>
+                </div>
+                <div className="text-[10px] sm:text-xs text-beer-timberwolf/70 dark:text-beer-cafe-noir/70 mb-2 flex items-center">
+                    <CalendarDays size={12} className="mr-1 opacity-80 text-beer-jonquil shrink-0" />
+                    <span className="truncate">{beer.first_brewed}</span>
+                </div>
+                <div className="flex-grow"></div>
+                <div className="mt-auto pt-1.5 border-t border-beer-chamoisee/70 dark:border-beer-beaver/70 flex flex-col space-y-1 text-xs">
+                    <div className="flex items-center">
+                        <Percent size={12} className="mr-1 text-beer-jonquil opacity-90 shrink-0" />
+                        <span className="font-semibold text-beer-timberwolf dark:text-beer-cafe-noir mr-0.5">ABV:</span>
+                        <span className="text-beer-jonquil font-medium">
+                            {beer.abv !== null && beer.abv !== undefined ? `${beer.abv}%` : 'N/A'}
+                        </span>
+                    </div>
+                    {beer.ibu !== null && beer.ibu !== undefined && (
+                        <div className="flex items-center">
+                            <Zap size={12} className="mr-1 text-beer-jonquil opacity-90 shrink-0" />
+                            <span className="font-semibold text-beer-timberwolf dark:text-beer-cafe-noir mr-0.5">IBU:</span>
+                            <span className="text-beer-jonquil font-medium">{beer.ibu}</span>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Image Area (Right Side) */}
+            <div className="relative w-2/5 sm:w-1/2 bg-beer-chamoisee/40 dark:bg-beer-beaver/40 flex items-center justify-center overflow-hidden group">
+                {imageUrlToDisplay ? (
+                    <Image
+                        src={imageUrlToDisplay}
+                        alt={beer.name || 'Beer image'}
+                        fill
+                        className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 640px) 20vw, 15vw"
+                        unoptimized={process.env.NODE_ENV === 'development'}
+                        onError={(e) => {
+                            console.error(`Failed to load image for ${beer.name}: ${imageUrlToDisplay}`, (e.target as HTMLImageElement).src);
+                        }}
+                    />
+                ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-beer-timberwolf/70 dark:text-beer-cafe-noir/70 p-2 text-center">
+                        <Droplet size={32} className="opacity-50 mb-1" />
+                        <span className="text-xs">No Image</span>
+                    </div>
+                )}
             </div>
         </div>
     );

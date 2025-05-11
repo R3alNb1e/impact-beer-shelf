@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Sidebar from "@/components/layout/Sidebar";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+    subsets: ["latin"],
+    variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
-    title: "Beer Collection App",
-    description: "Catalog your growing beer collection.",
+    title: "My Beer Collection",
+    description: "An awesome collection of beers.",
 };
 
 export default function RootLayout({
@@ -15,15 +19,15 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-        <body className={`${inter.className} bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col`}>
-        {/*add a global Navbar and Footer here later */}
-        {/* <Navbar /> */}
-        <div className="flex-grow">
-            {children}
-        </div>
-        {/* <Footer /> */}
-        </body>
+        <html lang="en" className={`${inter.variable} font-sans`}>
+            <body
+                className={`flex h-screen bg-beer-timberwolf text-beer-cafe-noir dark:bg-beer-cafe-noir dark:text-beer-timberwolf antialiased`}
+            >
+                <Sidebar />
+                <div className="flex-1 flex flex-col overflow-y-auto">
+                    {children}
+                </div>
+            </body>
         </html>
     );
 }

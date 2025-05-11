@@ -4,6 +4,7 @@ export interface Beer {
     tagline: string;
     first_brewed: string;
     description: string;
+    image_url: string | null;
     image: string | null;
     abv: number | null;
     ibu: number | null;
@@ -58,4 +59,17 @@ export interface Hop {
     amount: Volume;
     add: string;
     attribute: string;
+}
+
+export interface BeerFilters {
+    beer_name?: string;
+    brewed_before?: string;
+    brewed_after?: string;
+    abv_gt?: number;
+    abv_lt?: number;
+    ibu_gt?: number;
+    ibu_lt?: number;
+    ebc_gt?: number;
+    ebc_lt?: number;
+    food?: string;
 }

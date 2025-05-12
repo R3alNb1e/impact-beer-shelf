@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Impact Beer Shelf
 
-## Getting Started
+Welcome to Impact Beer Shelf! This is a web application built with Next.js that allows users to browse a collection of beers, view details, mark favorites, and discover random brews. The project is styled with Tailwind CSS and uses TypeScript for type safety.
 
-First, run the development server:
+**Live Project deployed on Vercel:** [https://impact-beer-shelf-mvp.vercel.app/](https://impact-beer-shelf-mvp.vercel.app/)
+
+## Features
+
+* **Browse Beer Collection:** View a paginated list of beers.
+* **Filter Beers:** Filter the collection by various criteria like name, ABV, IBU, and brewing date.
+* **Random Beer Discovery:** Get a random beer suggestion.
+* **Favorites:** Mark beers as favorites and view them on a dedicated favorites page. User preferences are stored in `localStorage`.
+* **Responsive Design:** Adapts to different screen sizes.
+* **Dark Mode Support:** (Implied by your styling classes, confirm if fully implemented)
+
+## Tech Stack
+
+* **Framework:** [Next.js](https://nextjs.org/) (v15.3.2)
+* **Language:** [TypeScript](https://www.typescriptlang.org/) (v5)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/) (v4)
+* **UI/Icons:** [Lucide React](https://lucide.dev/) for icons.
+* **Animations:** [Framer Motion](https://www.framer.com/motion/) for UI animations.
+* **Linting:** [ESLint](https://eslint.org/) (configured with Next.js defaults).
+* **Package Manager:** npm (implied by `package.json` scripts)
+
+## API Used
+
+This project fetches beer data from the **PunkAPI V3 (Unofficial)**:
+* **Base URL:** `https://punkapi.online/v3`
+
+The API is used to:
+* Fetch lists of beers.
+* Fetch individual beer details by ID.
+* Fetch a random beer.
+* Filter beers based on various parameters.
+
+*Note: This is an unofficial instance of the PunkAPI. Its stability and data accuracy might differ from the official PunkAPI v2.*
+
+## Getting Started Locally
+
+To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+
+* Node.js (v18.x or v20.x or later recommended)
+* npm (comes with Node.js)
+
+### Installation & Setup
+
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/R3alNb1e/impact-beer-shelf.git](https://github.com/R3alNb1e/impact-beer-shelf.git)
+    cd impact-beer-shelf
+    ```
+
+2.  **Install NPM packages:**
+    ```bash
+    npm install
+    ```
+
+### Running the Development Server
+
+To start the development server (usually on `http://localhost:3000`):
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

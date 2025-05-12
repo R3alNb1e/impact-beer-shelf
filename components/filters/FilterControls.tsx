@@ -6,7 +6,7 @@ import { SlidersHorizontal, Search, RotateCcw } from 'lucide-react';
 
 interface FilterControlsProps {
     initialFilters?: Partial<BeerFilters>;
-    onApplyFilters: (filters: BeerFilters) => void;
+    onApplyFilters: (filters: Partial<BeerFilters>) => void;
     isLoading?: boolean;
 }
 
@@ -33,25 +33,25 @@ const FilterControls: React.FC<FilterControlsProps> = ({ initialFilters = {}, on
             return;
         }
         if (/^\d{0,4}$/.test(yearValue)) {
-            const month = field === 'brewed_after' ? '01' : '12';
             setFilters(prev => ({
                 ...prev,
-                [field]: yearValue.length === 4 ? `${month}/${yearValue}` : prev[field]
+                [field]: yearValue.length === 4 ? `${field === 'brewed_after' ? '01' : '12'}/${yearValue}` : undefined
             }));
         }
     };
 
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const cleanedFilters: BeerFilters = {};
+        const activeFilters: Partial<BeerFilters> = {};
         let key: keyof BeerFilters;
         for (key in filters) {
-            if (filters[key] !== undefined && filters[key] !== '') {
-                if (typeof filters[key] === 'string' && (filters[key] as string).trim() === '') continue;
-                cleanedFilters[key] = filters[key] as any;
+            const value = filters[key];
+            if (value !== undefined && value !== null && String(value).trim() !== '') {
+                (activeFilters as any)[key] = value;
             }
         }
-        onApplyFilters(cleanedFilters);
+        onApplyFilters(activeFilters);
         if (window.innerWidth < 640) {
             setShowFilters(false);
         }
@@ -68,14 +68,22 @@ const FilterControls: React.FC<FilterControlsProps> = ({ initialFilters = {}, on
             ibu_lt: undefined,
         };
         setFilters(defaultFilters);
-        onApplyFilters({});
+        onApplyFilters({}); // Send empty object for reset
         if (window.innerWidth < 640) {
             setShowFilters(false);
         }
     };
-
+    // ... rest of your component JSX (inputClass, labelClass, form)
     const inputClass = "w-full p-2.5 rounded-md bg-beer-timberwolf/80 dark:bg-beer-cafe-noir/80 border border-beer-beaver dark:border-beer-chamoisee text-beer-cafe-noir dark:text-beer-timberwolf placeholder-beer-cafe-noir/50 dark:placeholder-beer-timberwolf/50 focus:ring-2 focus:ring-beer-jonquil focus:border-transparent disabled:opacity-70";
     const labelClass = "block text-sm font-medium mb-1 text-beer-cafe-noir dark:text-beer-timberwolf";
+
+    // For display in the input, get just the year part
+    const getDisplayYear = (dateString: string | undefined) => {
+        if (dateString && dateString.includes('/')) {
+            return dateString.split('/')[1];
+        }
+        return '';
+    };
 
     return (
         <div className="mb-8 p-4 sm:p-6 bg-beer-beaver/50 dark:bg-beer-chamoisee/30 rounded-xl shadow-lg">
@@ -96,12 +104,12 @@ const FilterControls: React.FC<FilterControlsProps> = ({ initialFilters = {}, on
                         <input type="text" id="beer_name" name="beer_name" value={filters.beer_name || ''} onChange={handleChange} placeholder="e.g., Punk IPA" className={inputClass} disabled={isLoading} />
                     </div>
                     <div>
-                        <label htmlFor="brewed_after_year" className={labelClass}>Brewed After (YYYY)</label>
-                        <input type="number" id="brewed_after_year" name="brewed_after_year_display"  value={filters.brewed_after ? filters.brewed_after.split('/')[1] : ''} onChange={(e) => handleYearChange(e, 'brewed_after')} placeholder="e.g., 2010" className={inputClass} disabled={isLoading} min="1900" max={new Date().getFullYear()} />
+                        <label htmlFor="brewed_after_year_display" className={labelClass}>Brewed After (YYYY)</label>
+                        <input type="number" id="brewed_after_year_display" name="brewed_after_year_display" value={getDisplayYear(filters.brewed_after)} onChange={(e) => handleYearChange(e, 'brewed_after')} placeholder="e.g., 2010" className={inputClass} disabled={isLoading} min="1900" max={new Date().getFullYear()} />
                     </div>
                     <div>
-                        <label htmlFor="brewed_before_year" className={labelClass}>Brewed Before (YYYY)</label>
-                        <input type="number" id="brewed_before_year" name="brewed_before_year_display" value={filters.brewed_before ? filters.brewed_before.split('/')[1] : ''} onChange={(e) => handleYearChange(e, 'brewed_before')} placeholder="e.g., 2015" className={inputClass} disabled={isLoading} min="1900" max={new Date().getFullYear()} />
+                        <label htmlFor="brewed_before_year_display" className={labelClass}>Brewed Before (YYYY)</label>
+                        <input type="number" id="brewed_before_year_display" name="brewed_before_year_display" value={getDisplayYear(filters.brewed_before)} onChange={(e) => handleYearChange(e, 'brewed_before')} placeholder="e.g., 2015" className={inputClass} disabled={isLoading} min="1900" max={new Date().getFullYear()} />
                     </div>
                     <div>
                         <label htmlFor="abv_gt" className={labelClass}>Min ABV (%)</label>

@@ -1,4 +1,3 @@
-// src/app/page.tsx (or /collection/page.tsx)
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react'; // Added useMemo

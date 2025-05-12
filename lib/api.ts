@@ -82,9 +82,9 @@ export async function fetchRandomBeer(): Promise<Beer | null> {
             throw new Error(`API Error fetching random beer: ${response.status} ${response.statusText}. Body: ${errorBody}`);
         }
 
-        const beerData: Beer = await response.json(); // Directly expect a single Beer object
+        const beerData: Beer = await response.json();
 
-        if (beerData && beerData.id && beerData.name) { // Check the object directly
+        if (beerData && beerData.id && beerData.name) {
             console.log("[API FETCH V3] Successfully fetched random beer:", beerData);
             return beerData;
         } else {

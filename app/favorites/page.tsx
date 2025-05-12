@@ -20,7 +20,7 @@ const FavoritesPage = () => {
             console.log("FAV PAGE: Raw Local Storage Data:", allUserData);
 
             const favoriteIds = Object.entries(allUserData)
-                .filter(([_id, data]) => data?.isFavorite === true) // FIX: Renamed 'id' to '_id'
+                .filter(([_id, data]) => data?.isFavorite === true)
                 .map(([id]) => id);
             console.log("FAV PAGE: Filtered Favorite IDs:", favoriteIds);
 

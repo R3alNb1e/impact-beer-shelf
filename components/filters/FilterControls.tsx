@@ -26,21 +26,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({ initialFilters = {}, on
         }));
     };
 
-    const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'brewed_after' | 'brewed_before') => {
-        const yearValue = e.target.value;
-        if (yearValue === '') {
-            setFilters(prev => ({ ...prev, [field]: undefined }));
-            return;
-        }
-        if (/^\d{0,4}$/.test(yearValue)) {
-            setFilters(prev => ({
-                ...prev,
-                [field]: yearValue.length === 4 ? `${field === 'brewed_after' ? '01' : '12'}/${yearValue}` : undefined
-            }));
-        }
-    };
-
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const activeFilters: Partial<BeerFilters> = {};
@@ -77,14 +62,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({ initialFilters = {}, on
     const inputClass = "w-full p-2.5 rounded-md bg-beer-timberwolf/80 dark:bg-beer-cafe-noir/80 border border-beer-beaver dark:border-beer-chamoisee text-beer-cafe-noir dark:text-beer-timberwolf placeholder-beer-cafe-noir/50 dark:placeholder-beer-timberwolf/50 focus:ring-2 focus:ring-beer-jonquil focus:border-transparent disabled:opacity-70";
     const labelClass = "block text-sm font-medium mb-1 text-beer-cafe-noir dark:text-beer-timberwolf";
 
-    // For display in the input, get just the year part
-    const getDisplayYear = (dateString: string | undefined) => {
-        if (dateString && dateString.includes('/')) {
-            return dateString.split('/')[1];
-        }
-        return '';
-    };
-
     return (
         <div className="mb-8 p-4 sm:p-6 bg-beer-beaver/50 dark:bg-beer-chamoisee/30 rounded-xl shadow-lg">
             <button
@@ -102,14 +79,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({ initialFilters = {}, on
                     <div>
                         <label htmlFor="beer_name" className={labelClass}>Beer Name</label>
                         <input type="text" id="beer_name" name="beer_name" value={filters.beer_name || ''} onChange={handleChange} placeholder="e.g., Punk IPA" className={inputClass} disabled={isLoading} />
-                    </div>
-                    <div>
-                        <label htmlFor="brewed_after_year_display" className={labelClass}>Brewed After (YYYY)</label>
-                        <input type="number" id="brewed_after_year_display" name="brewed_after_year_display" value={getDisplayYear(filters.brewed_after)} onChange={(e) => handleYearChange(e, 'brewed_after')} placeholder="e.g., 2010" className={inputClass} disabled={isLoading} min="1900" max={new Date().getFullYear()} />
-                    </div>
-                    <div>
-                        <label htmlFor="brewed_before_year_display" className={labelClass}>Brewed Before (YYYY)</label>
-                        <input type="number" id="brewed_before_year_display" name="brewed_before_year_display" value={getDisplayYear(filters.brewed_before)} onChange={(e) => handleYearChange(e, 'brewed_before')} placeholder="e.g., 2015" className={inputClass} disabled={isLoading} min="1900" max={new Date().getFullYear()} />
                     </div>
                     <div>
                         <label htmlFor="abv_gt" className={labelClass}>Min ABV (%)</label>

@@ -11,7 +11,6 @@ Welcome to Impact Beer Shelf! This is a web application built with Next.js that 
 * **Random Beer Discovery:** Get a random beer suggestion.
 * **Favorites:** Mark beers as favorites and view them on a dedicated favorites page. User preferences are stored in `localStorage`.
 * **Responsive Design:** Adapts to different screen sizes.
-* **Dark Mode Support:** (Implied by your styling classes, confirm if fully implemented)
 
 ## Tech Stack
 

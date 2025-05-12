@@ -34,11 +34,16 @@ const Sidebar = () => {
         };
     }, [isMobileSidebarOpen]);
 
-    const mainTextColor = "text-beer-cafe-noir";
-    const mutedTextColor = "text-beer-cafe-noir/70";
-    const iconColor = "text-beer-cafe-noir/90";
-    const hoverBgColor = "hover:bg-beer-jonquil/20";
-    const hoverTextColor = "hover:text-beer-jonquil";
+    // Inverted Color Variables (Dark Theme)
+    const mainTextColor = "text-neutral-100"; // Was text-beer-cafe-noir (dark)
+    const mutedTextColor = "text-neutral-400"; // Was text-beer-cafe-noir/70 (darker)
+    const iconColor = "text-neutral-300";
+    const hoverBgColor = "hover:bg-neutral-700"; // Was hover:bg-beer-jonquil/20 (light accent bg)
+                                                 // Alternative: hover:bg-white/10 or hover:bg-beer-jonquil/5
+    const hoverTextColor = "hover:text-beer-jonquil"; // Jonquil (accent) should pop on dark hover bg
+
+    const lightBorderColor = "border-neutral-600"; // For borders on dark background
+    const slightlyLighterBorderColor = "border-neutral-700"; // For less prominent borders
 
     return (
         <>
@@ -46,7 +51,7 @@ const Sidebar = () => {
                 <button
                     aria-label="Open sidebar"
                     className={`lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md shadow-md
-                                bg-[#CBC4B9] dark:bg-beer-beaver 
+                                 bg-[#533527]
                                 ${mainTextColor} focus:outline-none focus:ring-2 focus:ring-beer-jonquil`}
                     onClick={() => setIsMobileSidebarOpen(true)}
                 >
@@ -54,10 +59,9 @@ const Sidebar = () => {
                 </button>
             )}
 
-
             {isMobileSidebarOpen && (
                 <div
-                    className="lg:hidden fixed inset-0 z-30 bg-transparent"
+                    className="lg:hidden fixed inset-0 z-30 bg-black/50"
                     onClick={() => setIsMobileSidebarOpen(false)}
                     aria-hidden="true"
                 ></div>
@@ -70,19 +74,20 @@ const Sidebar = () => {
                     fixed lg:sticky inset-y-0 left-0
                     z-40 h-screen
                     w-full sm:w-72 md:w-80 lg:w-64
-                    bg-[#CBC4B9] shadow-xl {/* Using direct hex as per your last code */}
-                    border-r border-beer-beaver/50 
+                      bg-[#533527] shadow-xl 
+                    border-r ${lightBorderColor} {/* Was border-beer-beaver/50 */}
                     flex flex-col p-5 sm:p-6
                     transition-transform duration-300 ease-in-out
                 `}
             >
                 <div className="flex items-center justify-between mb-8 sm:mb-10">
-                    <div className={`text-2xl sm:text-3xl font-bold text-beer-jonquil flex items-center`}>
+                    {/* Assuming text-beer-jonquil is a bright accent color that works on dark backgrounds */}
+                    <div className={`text-2xl sm:text-3xl font-bold text-neutral-100 flex items-center`}>
                         <span>BeerShelf</span>
                     </div>
                     <button
                         aria-label="Close sidebar"
-                        className={`lg:hidden p-1 ${iconColor} ${hoverTextColor}`}
+                        className={`lg:hidden p-1 ${iconColor} ${hoverTextColor}`} // Uses updated iconColor & hoverTextColor
                         onClick={() => setIsMobileSidebarOpen(false)}
                     >
                         <X size={28} />
@@ -108,8 +113,8 @@ const Sidebar = () => {
                     </ul>
                 </nav>
 
-                <div className={`mt-auto pt-4 border-t border-beer-beaver/30`}>
-                    <p className={`text-sm ${mutedTextColor} mt-5 text-center`}>
+                <div className={`mt-auto pt-4 border-t ${slightlyLighterBorderColor}`}> {/* Was border-beer-beaver/30 */}
+                    <p className={`text-sm text-neutral-100 mt-5 text-center`}>
                         © {new Date().getFullYear()} Beer Enthusiast
                     </p>
                 </div>

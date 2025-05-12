@@ -97,7 +97,7 @@ const RandomBeerPage = () => {
                 <button
                     onClick={loadRandomBeer}
                     disabled={isLoading}
-                    className="bg-beer-jonquil text-beer-cafe-noir font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-opacity-80 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                    className="bg-[#533527] text-[#CBC4B9] font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-opacity-80 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-lg"
                 >
                     {isLoading ? 'Pouring...' : 'Get Another Random Beer!'}
                 </button>

@@ -82,7 +82,7 @@ export default function Page() {
                 )}
 
                 {!isLoading && !error && beers.length === 0 && (
-                    <div className="text-center py-10 bg-beer-timberwolf/50 dark:bg-beer-cafe-noir/50 p-8 rounded-lg shadow-md mt-8">
+                    <div className="text-center py-10  p-8 rounded-lg shadow-md mt-8">
                         <h2 className="text-2xl font-semibold mb-3 text-beer-cafe-noir dark:text-beer-timberwolf">No Beers Found</h2>
                         <p className="text-beer-chamoisee dark:text-beer-beaver">
                             Try adjusting your filters or check back later!

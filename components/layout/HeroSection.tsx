@@ -58,12 +58,6 @@ const textElementVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
-const buttonVariants = {
-    hidden: { opacity: 0, scale: 0.7 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "backOut" } },
-    hover: { scale: 1.05, y: -1, boxShadow: "0px 7px 18px rgba(0,0,0,0.12)" },
-    tap: { scale: 0.97 },
-};
 
 interface ImageStyle {
     top?: string;
@@ -129,9 +123,7 @@ const HeroSection = () => {
 
     return (
         <motion.section
-            className="relative text-center py-12 sm:py-20 px-4 shadow-lg overflow-hidden min-h-[70vh] sm:min-h-[75vh] flex flex-col items-center justify-center
-                       bg-gradient-to-br from-beer-chamoisee via-beer-beaver to-beer-cafe-noir
-                       dark:from-beer-cafe-noir dark:via-beer-beaver dark:to-beer-chamoisee"
+            className="relative text-center py-12 sm:py-20 px-4 shadow-lg overflow-hidden min-h-[70vh] sm:min-h-[75vh] flex flex-col items-center justify-center"
             variants={heroContainerVariants}
             initial="hidden"
             animate="visible"
@@ -142,7 +134,6 @@ const HeroSection = () => {
                         key={img.id}
                         className={`absolute ${img.className}`}
                         style={getResponsiveStyle(img.style)}
-                        variants={imageItemVariants}
                         custom={index}
                         animate={["visible", "float"]}
                     >
@@ -181,15 +172,6 @@ const HeroSection = () => {
                 >
                     Explore a curated collection of unique and flavorful beers. From hoppy IPAs to rich stouts, find your next favorite.
                 </motion.p>
-
-                <motion.button
-                    className="bg-beer-jonquil text-beer-cafe-noir font-semibold py-2.5 px-6 sm:py-3 sm:px-7 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base lg:text-lg transform focus:outline-none focus:ring-2 ring-offset-4 ring-beer-jonquil/80 dark:ring-offset-beer-cafe-noir"
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                >
-                    Browse the Collection
-                </motion.button>
             </motion.div>
 
         </motion.section>

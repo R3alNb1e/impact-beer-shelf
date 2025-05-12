@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Beer } from '@/types';
 import BeerCard from './BeerCard';

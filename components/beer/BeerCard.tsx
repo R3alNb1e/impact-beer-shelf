@@ -1,10 +1,10 @@
-// src/components/beer/BeerCard.tsx
 "use client";
 
 import React from 'react';
 import Image from 'next/image';
 import { Beer } from '@/types';
-import { CalendarDays, Zap, Droplet, Percent } from 'lucide-react';
+import { Heart, CalendarDays, Zap, Droplet, Percent } from 'lucide-react';
+import {useUserBeerData} from "@/hooks/useUserBeerData";
 
 export interface BeerCardProps {
     beer: Beer;
@@ -13,6 +13,8 @@ export interface BeerCardProps {
 }
 
 const BeerCard: React.FC<BeerCardProps> = ({ beer, isLarge = false, variant = 'default' }) => {
+    const { isFavorite, toggleFavorite } = useUserBeerData(beer.id);
+
     let imageUrlToDisplay: string | null = null;
 
     if (beer.image_url) {
@@ -21,19 +23,41 @@ const BeerCard: React.FC<BeerCardProps> = ({ beer, isLarge = false, variant = 'd
         imageUrlToDisplay = `https://punkapi.online/v3/images/${beer.image}`;
     }
 
-    // ----- 1. Extra Large (2x2) & Tall (1x2) - Image Dominant with Overlay -----
+    const renderFavoriteButton = (baseClasses = "absolute top-2 right-2 z-20") => (
+        <button
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFavorite();
+            }}
+            className={`${baseClasses} p-1.5 rounded-full bg-black/30 hover:bg-black/50 text-white transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-beer-jonquil focus-visible:ring-offset-2 focus-visible:ring-offset-black/50`}
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        >
+            <Heart
+                size={isLarge ? 24 : 18}
+                className={`transition-all duration-200 ${
+                    isFavorite ? 'fill-red-500 stroke-red-600' : 'fill-transparent stroke-current'
+                }`}
+            />
+        </button>
+    );
+
+
     if (isLarge && (variant === 'extraLarge' || variant === 'tall')) {
         return (
             <div className="relative bg-beer-cafe-noir rounded-xl shadow-2xl overflow-hidden h-full group transition-all duration-300 hover:shadow-beer-jonquil/30 hover:ring-2 hover:ring-beer-jonquil">
+                {renderFavoriteButton("absolute top-3 right-3 z-20")}
+
                 {imageUrlToDisplay ? (
                     <Image
                         src={imageUrlToDisplay}
                         alt={beer.name || 'Beer image'}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Consider adjusting based on actual grid cell size
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         unoptimized={process.env.NODE_ENV === 'development'}
-                        priority={isLarge} // Good for LCP
+                        priority={isLarge}
                         onError={(e) => {
                             console.error(`Failed to load image for ${beer.name}: ${imageUrlToDisplay}`, (e.target as HTMLImageElement).src);
                         }}
@@ -44,7 +68,6 @@ const BeerCard: React.FC<BeerCardProps> = ({ beer, isLarge = false, variant = 'd
                         <span className="text-lg">No Image Available</span>
                     </div>
                 )}
-                {/* MODIFIED Text Overlay for better contrast */}
                 <div className="absolute inset-0 flex flex-col justify-end
                                 bg-gradient-to-t from-black/70 via-black/40 to-transparent
                                 p-4 sm:p-5 md:p-6 group-hover:from-black/80 transition-all duration-300">
@@ -55,18 +78,17 @@ const BeerCard: React.FC<BeerCardProps> = ({ beer, isLarge = false, variant = 'd
                         {beer.name}
                     </h3>
                     <p className="text-sm sm:text-base text-white mt-1 drop-shadow-md truncate" title={beer.tagline}>
-                        {/* Kept beer-timberwolf for tagline, but with higher opacity for better readability on gradient */}
                         {beer.tagline}
                     </p>
                     <div className="mt-2 flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm">
                         {beer.abv && (
-                            <div className="flex items-center text-white"> {/* Brighter text for details */}
+                            <div className="flex items-center text-white">
                                 <Percent size={14} className="mr-1 text-beer-jonquil" />
                                 <span className="font-medium">{beer.abv}% ABV</span>
                             </div>
                         )}
                         {beer.ibu && (
-                            <div className="flex items-center text-white"> {/* Brighter text for details */}
+                            <div className="flex items-center text-white">
                                 <Zap size={14} className="mr-1 text-beer-jonquil" />
                                 <span className="font-medium">{beer.ibu} IBU</span>
                             </div>
@@ -77,11 +99,11 @@ const BeerCard: React.FC<BeerCardProps> = ({ beer, isLarge = false, variant = 'd
         );
     }
 
-    // ----- 2. Wide Card (e.g., 2x1) - Image Left, Text Right -----
     if (isLarge && variant === 'wide') {
-        // ... (This section remains unchanged from your provided code)
         return (
-            <div className="bg-beer-beaver dark:bg-beer-chamoisee/80 rounded-xl shadow-xl dark:shadow-beer-cafe-noir/40 overflow-hidden h-full group flex flex-col sm:flex-row transition-all duration-300 hover:shadow-beer-jonquil/20 hover:ring-2 hover:ring-beer-jonquil/70">
+            <div className="relative bg-beer-beaver dark:bg-beer-chamoisee/80 rounded-xl shadow-xl dark:shadow-beer-cafe-noir/40 overflow-hidden h-full group flex flex-col sm:flex-row transition-all duration-300 hover:shadow-beer-jonquil/20 hover:ring-2 hover:ring-beer-jonquil/70">
+                {renderFavoriteButton("absolute top-3 right-3 z-20 text-beer-timberwolf dark:text-beer-cafe-noir bg-beer-chamoisee/40 dark:bg-beer-beaver/40 hover:bg-beer-chamoisee/60 dark:hover:bg-beer-beaver/60")}
+
                 {/* Image Section */}
                 <div className="relative w-full sm:w-2/5 md:w-1/3 h-48 sm:h-full bg-beer-chamoisee/50 dark:bg-beer-beaver/50 flex items-center justify-center overflow-hidden">
                     {imageUrlToDisplay ? (
@@ -144,14 +166,15 @@ const BeerCard: React.FC<BeerCardProps> = ({ beer, isLarge = false, variant = 'd
         );
     }
 
-    // ----- 3. Default Card (1x1) - Text Left, Image Right -----
-    // ... (This section remains unchanged from your provided code)
     return (
-        <div className="bg-beer-beaver dark:bg-beer-chamoisee/80 rounded-xl shadow-xl dark:shadow-beer-cafe-noir/40 overflow-hidden h-full group flex flex-row transition-all duration-300 hover:shadow-beer-jonquil/20 hover:ring-2 hover:ring-beer-jonquil/70">
+
+        <div className="relative bg-beer-beaver dark:bg-beer-chamoisee/80 rounded-xl shadow-xl dark:shadow-beer-cafe-noir/40 overflow-hidden h-full group flex flex-row transition-all duration-300 hover:shadow-beer-jonquil/20 hover:ring-2 hover:ring-beer-jonquil/70">
+            {renderFavoriteButton("absolute top-1.5 right-1.5 z-20 text-beer-timberwolf dark:text-beer-cafe-noir bg-beer-chamoisee/40 dark:bg-beer-beaver/40 hover:bg-beer-chamoisee/60 dark:hover:bg-beer-beaver/60")}
+
             {/* Content Area (Left Side) */}
             <div className="w-3/5 sm:w-1/2 p-3 sm:p-4 flex flex-col text-beer-timberwolf dark:text-beer-cafe-noir">
                 <div className="mb-2">
-                    <h3 className="text-sm sm:text-base font-bold text-beer-jonquil transition-colors duration-300 group-hover:text-beer-jonquil/80 leading-tight" title={beer.name}>
+                    <h3 className="text-sm sm:text-base font-bold text-beer-jonquil transition-colors duration-300 group-hover:text-beer-jonquil/80 leading-tight pr-6" title={beer.name}> {/* Added padding right to prevent overlap with button */}
                         {beer.name}
                     </h3>
                     <p className="text-xs text-beer-timberwolf/80 dark:text-beer-cafe-noir/80 mt-1 h-8 sm:h-9 overflow-hidden text-ellipsis" title={beer.tagline}>

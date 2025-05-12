@@ -5,7 +5,7 @@ export interface Beer {
     first_brewed: string;
     description: string;
     image_url: string | null;
-    image: string | null;
+    image: string | null; // Assuming your API might use this field too
     abv: number | null;
     ibu: number | null;
     target_fg: number | null;
@@ -72,4 +72,14 @@ export interface BeerFilters {
     ebc_gt?: number;
     ebc_lt?: number;
     food?: string;
+}
+
+export interface UserBeerData {
+    isFavorite?: boolean;
+    rating?: number;
+    notes?: string;
+}
+
+export interface AllUserBeerData {
+    [beerId: string]: UserBeerData;
 }

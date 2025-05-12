@@ -22,26 +22,6 @@ const heroContainerVariants = {
     },
 };
 
-const imageItemVariants = {
-    hidden: { opacity: 0, y: 25, scale: 0.7, rotate: -12 },
-    visible: {
-        opacity: 1, y: 0, scale: 1, rotate: 0,
-        transition: { type: "spring", stiffness: 90, damping: 14 },
-    },
-    float: (i: number) => ({
-        y: ["0%", "-2%", "0%", "2%", "0%"],
-        rotate: [-1, 1, -1, 1, -1],
-        transition: {
-            duration: 6 + (i % 3) * 1.2 + Math.random() * 2.5,
-            repeat: Infinity,
-            repeatType: "mirror",
-            ease: "easeInOut",
-            delay: Math.random() * 1.5,
-        },
-    }),
-    hover: { scale: 1.08, transition: { duration: 0.3 } },
-};
-
 const textContentVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -151,7 +131,6 @@ const HeroSection = () => {
                 <motion.div
                     className={`mb-[-20px] xs:mb-[-30px] sm:mb-[-40px] lg:mb-[-60px] ${centralImage.className}`}
                     style={getResponsiveStyle(centralImage.style)}
-                    variants={imageItemVariants}
                     custom={backgroundImages.length}
                     animate={["visible", "float"]}
                     whileHover="hover"

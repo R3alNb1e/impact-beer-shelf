@@ -40,7 +40,7 @@ const Sidebar = () => {
     const hoverTextColor = "hover:text-beer-jonquil";
 
     const lightBorderColor = "border-neutral-600";
-    const slightlyLighterBorderColor = "border-neutral-700";
+    const slightlyLighterBorderColor = "border-neutral-300";
 
     return (
         <>
